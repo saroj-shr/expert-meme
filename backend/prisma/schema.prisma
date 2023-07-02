@@ -30,7 +30,7 @@ model Tenant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  assignedMetter Meter[]
+  assignedMeter Meter[]
 }
 
 model Meter {

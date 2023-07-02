@@ -5,7 +5,6 @@ import logger from "morgan";
 import { port, environment } from "./constant.mjs";
 
 import indexRouter from "./routes/index.mjs";
-import usersRouter from "./routes/users.mjs";
 import { connect, disconnect } from "./connection.mjs";
 
 const app = express();
@@ -17,8 +16,7 @@ app.use(cookieParser());
 
 await connect();
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use(indexRouter);
 app.listen(port, () => {
   console.log(`Server running ${port}`);
 });
