@@ -16,11 +16,6 @@ app.use(cookieParser());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-app.listen(
-  {
-    port,
-  },
-  () => {
-    console.log(`Server running ${port}`);
-  }
-);
+app.listen(port, () => {
+  console.log(`Server running ${port}`);
+});
