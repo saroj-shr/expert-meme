@@ -6,16 +6,25 @@ import { port, environment } from "./constant.mjs";
 
 import indexRouter from "./routes/index.mjs";
 import usersRouter from "./routes/users.mjs";
+import { connect, disconnect } from "./connection.mjs";
 
-var app = express();
+const app = express();
 
 app.use(logger(environment));
 app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 
+await connect();
+
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.listen(port, () => {
   console.log(`Server running ${port}`);
+});
+
+process.on("SIGTERM", async () => {
+  await disconnect();
+  console.log("SIGTERM");
+  process.exit();
 });
