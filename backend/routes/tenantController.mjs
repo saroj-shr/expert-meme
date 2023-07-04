@@ -39,7 +39,7 @@ export async function getTenantById(req, res, next) {
 
 // POST /tenants
 export async function createTenant(req, res, next) {
-  const { firstName, lastName, email, phoneNumber } = req.body;
+  const { firstName, lastName, email, phoneNumber,status } = req.body;
 
   try {
     const tenant = await prisma.tenant.create({
@@ -48,6 +48,7 @@ export async function createTenant(req, res, next) {
         lastName,
         email,
         phoneNumber,
+        status
       },
     });
 
@@ -60,12 +61,12 @@ export async function createTenant(req, res, next) {
 // PUT /tenants/:id
 export async function updateTenant(req, res, next) {
   const { id } = req.params;
-  const { firstName, lastName, email, phoneNumber } = req.body;
+  const { firstName, lastName, email, status,phoneNumber } = req.body;
 
   try {
     const tenant = await prisma.tenant.update({
       where: { id },
-      data: { firstName, lastName, email, phoneNumber },
+      data: { firstName, lastName, email, status,phoneNumber },
     });
 
     res.status(200).json(tenant);
@@ -101,6 +102,23 @@ export async function getTenantAssignedMeter(req, res, next) {
     }
 
     res.status(200).json(tenant.assignedMeter);
+  } catch (error) {
+    next(error);
+  }
+}
+
+// PUT /tenants/:id/status
+export async function updateTenantStatus(req, res, next) {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedTenant = await prisma.tenant.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.status(200).json(updatedTenant);
   } catch (error) {
     next(error);
   }

@@ -5,7 +5,7 @@ import logger from "morgan";
 import { port, environment } from "./constant.mjs";
 
 import indexRouter from "./routes/index.mjs";
-import { connect, disconnect } from "./connection.mjs";
+// import { connect, disconnect } from "./connection.mjs";
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cookieParser());
 
-await connect();
+// await connect();
 
 app.use(indexRouter);
 app.listen(port, () => {
@@ -22,7 +22,7 @@ app.listen(port, () => {
 });
 
 process.on("SIGTERM", async () => {
-  await disconnect();
+  // await disconnect();
   console.log("SIGTERM");
   process.exit();
 });

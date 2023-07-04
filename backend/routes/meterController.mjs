@@ -138,3 +138,20 @@ export async function getMeterPowerConsumption(req, res, next) {
     next(error);
   }
 }
+
+// PUT /meters/:id/status
+export async function updateMetersStatus(req, res, next) {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedMeter = await prisma.meter.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.status(200).json(updatedMeter);
+  } catch (error) {
+    next(error);
+  }
+}

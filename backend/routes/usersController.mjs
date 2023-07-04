@@ -8,6 +8,9 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+import jwt from 'jsonwebtoken';
+
+
 
 // GET /users
 export async function getAllUsers(req, res, next) {
@@ -83,3 +86,30 @@ export async function deleteUser(req, res, next) {
     next(error);
   }
 }
+
+
+//login
+export async function login(req, res, next) {
+  const { email, password } = req.body;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+    if (password === user.password) {
+      const accessToken = jwt.sign({ userId: user.id, name: user.name }, 'your-secret-key', {
+        expiresIn: '1h',
+      });
+      return res.status(200).json({ message: 'Login successful', accessToken: accessToken });
+    }
+    res.status(401).json({ message: 'Invalid email or password' });
+  } catch (error) {
+    next(error);
+  }
+}
+
