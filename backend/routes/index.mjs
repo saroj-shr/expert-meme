@@ -7,7 +7,7 @@ import {
   deleteMeter,
   getMeterPulses,
   getMeterPowerConsumption,
-  updateMetersStatus
+  updateMetersStatus,
 } from "./meterController.mjs";
 import {
   getAllPowerConsumptions,
@@ -32,7 +32,9 @@ import {
   updateTenant,
   deleteTenant,
   getTenantAssignedMeter,
-  updateTenantStatus
+  updateTenantStatus,
+  putTenantAssignedMeter,
+  deleteTenantAssignedMeter,
 } from "./tenantController.mjs";
 import {
   getAllUsers,
@@ -40,19 +42,17 @@ import {
   createUser,
   updateUser,
   deleteUser,
-  login
+  login,
 } from "./usersController.mjs";
-import {
-  Home
-} from "./homeController.mjs";
+import { Home } from "./homeController.mjs";
 
 //middleware
-import {Authenticate} from "../middleware/authenticate.js";
+import { Authenticate } from "../middleware/authenticate.js";
 
 const router = Router();
 
 /* GET home page. */
-router.get("/home",Authenticate, Home);
+router.get("/home", Authenticate, Home);
 // router.get("/", function (_req, res, _next) {
 //   res.status(200).json({
 //     message: "index",
@@ -67,7 +67,7 @@ router.put("/meters/:id", updateMeter);
 router.delete("/meters/:id", deleteMeter);
 router.get("/meters/:id/pulse", getMeterPulses);
 router.get("/meters/:id/powerConsumption", getMeterPowerConsumption);
-router.put("/meters/:id/status",  updateMetersStatus);
+router.put("/meters/:id/status", updateMetersStatus);
 
 // Power Consumption routes
 router.get("/powerConsumptions", getAllPowerConsumptions);
@@ -92,7 +92,9 @@ router.post("/tenants", createTenant);
 router.put("/tenants/:id", updateTenant);
 router.delete("/tenants/:id", deleteTenant);
 router.get("/tenants/:id/assignedMeter", getTenantAssignedMeter);
-router.put("/tenants/:id/status",  updateTenantStatus);
+router.put("/tenants/:id/assignedMeter/:meterId", putTenantAssignedMeter);
+router.delete("/tenants/:id/assignedMeter/:meterId", deleteTenantAssignedMeter);
+router.put("/tenants/:id/status", updateTenantStatus);
 
 // User routes
 router.get("/users", getAllUsers);

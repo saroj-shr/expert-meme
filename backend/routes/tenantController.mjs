@@ -6,6 +6,8 @@
 //     PUT /tenants/{id}: Update a tenant by ID.
 //     DELETE /tenants/{id}: Delete a tenant by ID.
 //     GET /tenants/{id}/assignedMeter: Get the meters assigned to a specific tenant.
+//     PUT /tenants/{id}/assignedMeter/{id} : Add the meters assigned to a specific tenant.
+//     DELETE /tenants/{id}/assignedMeter/{id} : Add the meters assigned to a specific tenant.
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -13,7 +15,11 @@ const prisma = new PrismaClient();
 // GET /tenants
 export async function getAllTenants(req, res, next) {
   try {
-    const tenants = await prisma.tenant.findMany();
+    const tenants = await prisma.tenant.findMany({
+      include: {
+        assignedMeter: true,
+      },
+    });
     res.status(200).json(tenants);
   } catch (error) {
     next(error);
@@ -25,7 +31,12 @@ export async function getTenantById(req, res, next) {
   const { id } = req.params;
 
   try {
-    const tenant = await prisma.tenant.findUnique({ where: { id } });
+    const tenant = await prisma.tenant.findUnique({
+      where: { id },
+      include: {
+        assignedMeter: true,
+      },
+    });
 
     if (!tenant) {
       return res.status(404).json({ message: "Tenant not found" });
@@ -39,7 +50,7 @@ export async function getTenantById(req, res, next) {
 
 // POST /tenants
 export async function createTenant(req, res, next) {
-  const { firstName, lastName, email, phoneNumber,status } = req.body;
+  const { firstName, lastName, email, phoneNumber, status } = req.body;
 
   try {
     const tenant = await prisma.tenant.create({
@@ -49,7 +60,6 @@ export async function createTenant(req, res, next) {
         email,
         phoneNumber,
         status,
-    
       },
     });
 
@@ -62,12 +72,12 @@ export async function createTenant(req, res, next) {
 // PUT /tenants/:id
 export async function updateTenant(req, res, next) {
   const { id } = req.params;
-  const { firstName, lastName, email, status,phoneNumber } = req.body;
+  const { firstName, lastName, email, status, phoneNumber } = req.body;
 
   try {
     const tenant = await prisma.tenant.update({
       where: { id },
-      data: { firstName, lastName, email, status,phoneNumber },
+      data: { firstName, lastName, email, status, phoneNumber },
     });
 
     res.status(200).json(tenant);
@@ -103,6 +113,75 @@ export async function getTenantAssignedMeter(req, res, next) {
     }
 
     res.status(200).json(tenant.assignedMeter);
+  } catch (error) {
+    next(error);
+  }
+}
+
+//     PUT /tenants/{id}/assignedMeter/{id} : Add the meters assigned to a specific tenant.
+export async function putTenantAssignedMeter(req, res, next) {
+  const { id, meterId } = req.params;
+
+  try {
+    const tenant = await prisma.tenant.update({
+      where: { id },
+      data: {
+        assignedMeter: {
+          set: {
+            id: meterId,
+          },
+        },
+      },
+      include: {
+        assignedMeter: true,
+      },
+    });
+
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant or Meter not found" });
+    }
+    res.status(200).json(tenant);
+  } catch (error) {
+    next(error);
+  }
+}
+
+//     DELETE /tenants/{id}/assignedMeter/{id} : Add the meters assigned to a specific tenant.
+export async function deleteTenantAssignedMeter(req, res, next) {
+  const { id, meterId } = req.params;
+
+  try {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id },
+      include: { assignedMeter: true },
+    });
+
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+
+    const meterIndex = tenant.assignedMeter.findIndex(
+      (meter) => meter.id === meterId
+    );
+
+    if (meterIndex === -1) {
+      return res.status(404).json({ message: "Meter not found" });
+    }
+
+    const updatedAssignedMeter = [...tenant.assignedMeter];
+    updatedAssignedMeter.splice(meterIndex, 1);
+
+    const updatedTenant = await prisma.tenant.update({
+      where: { id },
+      data: {
+        assignedMeter: {
+          set: updatedAssignedMeter,
+        },
+      },
+      include: { assignedMeter: true },
+    });
+
+    res.status(200).json(updatedTenant);
   } catch (error) {
     next(error);
   }
