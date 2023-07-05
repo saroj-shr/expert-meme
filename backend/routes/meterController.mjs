@@ -14,7 +14,11 @@ const prisma = new PrismaClient();
 // GET /meters
 export async function getAllMeters(req, res, next) {
   try {
-    const meters = await prisma.meter.findMany();
+    const meters = await prisma.meter.findMany({
+      where: {
+        status: true,
+      },
+    });
     res.status(200).json(meters);
   } catch (error) {
     next(error);

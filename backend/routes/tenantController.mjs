@@ -123,6 +123,22 @@ export async function putTenantAssignedMeter(req, res, next) {
   const { id, meterId } = req.params;
 
   try {
+    const meter = await prisma.meter.findFirst({
+      where: { meterPulse },
+    });
+
+    if (!meter) {
+      return res.status(404).json({ message: "Meter not found" });
+    }
+
+    if (meter.status == false) {
+      return res.status(404).json({ message: "Meter is not status is false" });
+    }
+
+    if (meter.tenantId) {
+      return res.status(404).json({ message: "Meter is assigned " });
+    }
+
     const tenant = await prisma.tenant.update({
       where: { id },
       data: {
@@ -138,7 +154,7 @@ export async function putTenantAssignedMeter(req, res, next) {
     });
 
     if (!tenant) {
-      return res.status(404).json({ message: "Tenant or Meter not found" });
+      return res.status(404).json({ message: "Tenant not found" });
     }
     res.status(200).json(tenant);
   } catch (error) {
