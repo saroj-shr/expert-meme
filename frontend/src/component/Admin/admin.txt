@@ -9,29 +9,15 @@ import Cookies from "js-cookie";
 
 const Admin = () => {
 
-    /***for redirect to tabs*/
-
-    const [activeTabId, setActiveTabId] = useState('example1');
-
-    const handleTabClick = (id) => {
-        setActiveTabId(id);
-
-    };
-
-    ///assign button action start
-
-    // const [showTable, setShowTable] = useState(false);
-    // const handleAssignClick = () => {
-    //     // setActiveTabId('example6');
-    //     // setShowTable(!showTable);
-        
-    // };
-
-        
+    /***for modal show when clicked in assign start*/
+    const [isAssignModalVisible, setIsAssignModalVisible] = useState(false);
+    const toggleAssignModal = () => {
+        setIsAssignModalVisible(!isAssignModalVisible);
+      };
       
-    ///assign button action ends
 
-    /***for redirect to tab ends*/
+
+    /***for modal show when clicked in assign end*/
 
     const navigate = useNavigate();
     //Drop down field
@@ -57,34 +43,6 @@ const Admin = () => {
 
     ];
 
-     
-     /*********************meters start dropdown */
-     const [optionsMeters, setOptionsMeters] = useState([]);
-     const [selectedOptionMeter, setSelectedOptionMeter] = useState('');
-   
-     useEffect(() => {
-       const fetchMeters = async () => {
-         try {
-           const response = await fetch('/meters');
-           const meters = await response.json();
-           const options = meters.map((meter) => ({
-             label: meter.deviceName,
-             value: meter.id,
-           }));
-           setOptionsMeters(options);
-         } catch (error) {
-           console.error(error);
-         }
-       };
-   
-       fetchMeters();
-     }, []);
-   
-     const handleOptionSelectMeter = (event) => {
-       setSelectedOptionMeter(event.target.value);
-     };
-    /*********************meters start dropdown ends */
-  
     /** All API Call For Tenants CRUD Starts  */
     //get all users
     const [tenantsList, setTenantsList] = useState([]);
@@ -154,7 +112,6 @@ const Admin = () => {
                     email,
                     phoneNumber,
                     status,
-                    assignedMeter: selectedOptionMeter, // Assign selected meter ID to tenant
 
 
                 }),
@@ -268,7 +225,6 @@ const Admin = () => {
                     position: toast.POSITION.TOP_RIGHT,
                     autoClose: true,
                 });
-                setActiveTabId("example2");
             } else if (res.status === 404) {
                 throw new Error('Tenant not found');
             } else {
@@ -572,7 +528,6 @@ const Admin = () => {
                     position: toast.POSITION.TOP_RIGHT,
                     autoClose: true,
                 });
-                setActiveTabId('example4');
             } else if (res.status === 404) {
                 throw new Error('Meter not found');
             } else {
@@ -693,7 +648,6 @@ const Admin = () => {
 
     useEffect(() => {
         metersListShow();
-
     }, [])
 
     // Meters CRUD ENDS 
@@ -711,60 +665,7 @@ const Admin = () => {
             navigate('/');
         }
     };
-    /*************************************logout complete */
-    /**********************show meter name api */
-    const [metersName, setMetersName] = useState([]);
-    const metersNameShow = async () => {
-        try {
-            const res = await fetch('/meters', {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                }
 
-            });
-
-            if (res.status === 200) {
-                const data = await res.json();
-                console.log(data);
-                setMetersName(data);
-            } else {
-                throw new Error('Failed to fetch items');
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: true
-            });
-        }
-    };
-    useEffect(() => {
-        metersNameShow();
-
-    }, [])
-
-     ///assign button action start
-     const [selectedTenant, setSelectedTenant] = useState(null);
-     const [showMeterDropdown, setShowMeterDropdown] = useState(false);
-     const [metersListName, setMetersListName] = useState([]);
-   
-     const handleAssignClick = async() => {
-       setSelectedTenant(null);
-       setShowMeterDropdown(true);
-       try {
-        const response = await fetch('/meters'); // Replace with your API endpoint
-        if (response.ok) {
-          const data = await response.json();
-          setMetersListName(data); // Assuming the response contains the meters list
-        } else {
-          throw new Error('Failed to fetch meters');
-        }
-      } catch (error) {
-        console.error('Error fetching meters:', error);
-      }
-     };
     const tabs = [
         {
             id: 'example1',
@@ -807,11 +708,6 @@ const Admin = () => {
                         <EuiFlexItem>
                             <EuiFormRow label="Status" >
                                 <EuiSelect options={options} value={selectedOption} onChange={handleOptionSelect} />
-                            </EuiFormRow>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                            <EuiFormRow label="Meters" >
-                                <EuiSelect options={optionsMeters} value={selectedOptionMeter} onChange={handleOptionSelectMeter} />
                             </EuiFormRow>
                         </EuiFlexItem>
                         {/* <EuiFlexItem>
@@ -874,31 +770,11 @@ const Admin = () => {
                                     ) : (
                                         <EuiTableRowCell><EuiButton color="primary" fill size="s" onClick={() => handleStatusChange(item.id, true)}>Enable</EuiButton></EuiTableRowCell>
                                     )}
-                                    <EuiTableRowCell>
-                                    
-                                    
-        
-          <EuiButton color="success" fill size="s" onClick={handleAssignClick}>
-            Assign
-          </EuiButton>
-          {showMeterDropdown  && (
-            <select>
-              {metersListName.map((meter) => (
-                <option key={meter.id} value={meter.id}>
-                  {meter.deviceName}
-                </option>
-              ))}
-            </select>
-       
-       
-      )}
-
- 
-                                    </EuiTableRowCell>
+                                    <EuiTableRowCell><EuiButton color="success" fill size="s" onClick={toggleAssignModal} >Assign</EuiButton></EuiTableRowCell>
                                     <EuiTableRowCell>
                                         <EuiFlexGroup>
                                             <EuiFlexItem >
-                                                <EuiButton color="primary" fill size="s" onClick={() => { editTenantsRequest(item.id); }}><EuiIcon type="documentEdit" size="m" /></EuiButton>
+                                                <EuiButton color="primary" fill size="s" onClick={() => { editTenantsRequest(item.id) }}><EuiIcon type="documentEdit" size="m" /></EuiButton>
                                             </EuiFlexItem>
                                             <EuiFlexItem >
                                                 <EuiButton color="danger" fill size="s" onClick={() => deleteTenantsRequest(item.id)}><EuiIcon type="trash" size="m" /></EuiButton>
@@ -910,6 +786,24 @@ const Admin = () => {
                             ))}
                         </EuiTableBody>
                     </EuiTable>
+
+                    {isAssignModalVisible && (
+        <EuiModal onClose={toggleAssignModal} initialFocus="[id=assignModalTitle]">
+          <EuiModalHeader>
+            <EuiModalHeaderTitle id="assignModalTitle">Assign</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            {/* Add your assign modal content here */}
+            {/* Example: <p>Modal content goes here</p> */}
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton onClick={toggleAssignModal} fill>
+              Close
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      )}
+
 
                 </>
 
@@ -1036,39 +930,6 @@ const Admin = () => {
         },
         {
             id: 'example6',
-            name: 'Assign Device',
-            content: (
-                <>
-                 
-
-                        <EuiTable >
-                            <EuiTableHeader>
-                                <EuiTableHeaderCell>S.N</EuiTableHeaderCell>
-                                <EuiTableHeaderCell>Device Name</EuiTableHeaderCell>
-                                <EuiTableHeaderCell>Action</EuiTableHeaderCell>
-                            </EuiTableHeader>
-                            <EuiTableBody >
-                                {metersName.map((item, index) => (
-                                    <EuiTableRow key={index}>
-                                        <EuiTableRowCell>{index + 1}</EuiTableRowCell>
-                                        <EuiTableRowCell>{item.deviceName}</EuiTableRowCell>
-                                        <EuiTableRowCell>
-                                            <EuiButton color="primary" fill size="s" >Assign</EuiButton>
-                                            <EuiButton color="danger" fill size="s" >Remove</EuiButton>
-                                        </EuiTableRowCell>
-                                    </EuiTableRow>
-
-                                ))}
-
-                            </EuiTableBody>
-                        </EuiTable>
-                 
-
-                </>
-            ),
-        },
-        {
-            id: 'example7',
             name: 'Logout',
             content: <p onClick={() => callLogout()}>Logout</p>,
         }
@@ -1076,31 +937,17 @@ const Admin = () => {
     ];
 
 
-    const activeTab = tabs.find((tab) => tab.id === activeTabId);
-
 
     return (
-        <div>
-            <ul className="tab-navigation">
-                {tabs.map((tab) => (
-                    <li key={tab.id} onClick={() => handleTabClick(tab.id)} style={{ color: activeTabId === tab.id ? 'yellow' : 'white' }}>
-                        {tab.name}
-                    </li>
-                ))}
-            </ul>
-            <div className="tab-content">
-                {activeTab && activeTab.content}
-            </div>
+        <div className="admin-pannl">
+            <EuiTabbedContent
+                tabs={tabs}
+            />
             <ToastContainer />
         </div>
-
-        //     <div className="admin-pannl">
-        //         <EuiTabbedContent
-        //             tabs={tabs}
-        //         />
-        //         <ToastContainer />
-        //     </div>
     );
 };
 
 export default Admin;
+
+

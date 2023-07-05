@@ -48,7 +48,8 @@ export async function createTenant(req, res, next) {
         lastName,
         email,
         phoneNumber,
-        status
+        status,
+    
       },
     });
 

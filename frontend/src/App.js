@@ -10,19 +10,19 @@ import { EuiProvider, EuiText } from '@elastic/eui';
 
 function App() {
   return (
-    <div className="App">
+
       <EuiProvider colorMode="light">
         <Router>
           <Routes>
             <Route path="/"  element={<Login/>}/>
-            <Route path="/signup"  element={<Signup/>}/>
+            {/* <Route path="/signup"  element={<Signup/>}/> */}
             <Route path="/home"  element={<ProtectedRoute><Home /></ProtectedRoute>}/>
           </Routes>
         </Router>
     
       </EuiProvider>
      
-    </div>
+   
   );
 }
 

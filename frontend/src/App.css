@@ -1,3 +1,16 @@
+.tab-navigation{
+  display: flex;
+  justify-content: space-between;
+  color:#fff;
+  background-color: blue;
+  padding:20px 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+
+}
+
+
 .login-left{
   background-color: #fff;
   -webkit-box-shadow: -2px 0px 5px 0px rgba(0,0,0,0.07);

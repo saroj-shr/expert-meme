@@ -8,7 +8,7 @@ import Cookies from "js-cookie";
 
 
 const Admin = () => {
-
+    
     /***for redirect to tabs*/
 
     const [activeTabId, setActiveTabId] = useState('example1');
@@ -18,18 +18,9 @@ const Admin = () => {
 
     };
 
-    ///assign button action start
-
-    // const [showTable, setShowTable] = useState(false);
-    // const handleAssignClick = () => {
-    //     // setActiveTabId('example6');
-    //     // setShowTable(!showTable);
-        
-    // };
-
-        
-      
-    ///assign button action ends
+    const handleAssignClick = () => {
+        setActiveTabId('example6');
+    };
 
     /***for redirect to tab ends*/
 
@@ -57,34 +48,6 @@ const Admin = () => {
 
     ];
 
-     
-     /*********************meters start dropdown */
-     const [optionsMeters, setOptionsMeters] = useState([]);
-     const [selectedOptionMeter, setSelectedOptionMeter] = useState('');
-   
-     useEffect(() => {
-       const fetchMeters = async () => {
-         try {
-           const response = await fetch('/meters');
-           const meters = await response.json();
-           const options = meters.map((meter) => ({
-             label: meter.deviceName,
-             value: meter.id,
-           }));
-           setOptionsMeters(options);
-         } catch (error) {
-           console.error(error);
-         }
-       };
-   
-       fetchMeters();
-     }, []);
-   
-     const handleOptionSelectMeter = (event) => {
-       setSelectedOptionMeter(event.target.value);
-     };
-    /*********************meters start dropdown ends */
-  
     /** All API Call For Tenants CRUD Starts  */
     //get all users
     const [tenantsList, setTenantsList] = useState([]);
@@ -154,7 +117,6 @@ const Admin = () => {
                     email,
                     phoneNumber,
                     status,
-                    assignedMeter: selectedOptionMeter, // Assign selected meter ID to tenant
 
 
                 }),
@@ -693,7 +655,7 @@ const Admin = () => {
 
     useEffect(() => {
         metersListShow();
-
+        metersNameShow();
     }, [])
 
     // Meters CRUD ENDS 
@@ -711,60 +673,36 @@ const Admin = () => {
             navigate('/');
         }
     };
-    /*************************************logout complete */
-    /**********************show meter name api */
-    const [metersName, setMetersName] = useState([]);
-    const metersNameShow = async () => {
-        try {
-            const res = await fetch('/meters', {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                }
-
-            });
-
-            if (res.status === 200) {
-                const data = await res.json();
-                console.log(data);
-                setMetersName(data);
-            } else {
-                throw new Error('Failed to fetch items');
+  /*************************************logout complete */
+  /**********************show meter name api */
+  const [metersName,setMetersName] = useState([]);
+  const metersNameShow = async () => {
+    try {
+        const res = await fetch('/meters', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
             }
-        } catch (error) {
-            console.log(error);
-            toast.error(error, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: true
-            });
-        }
-    };
-    useEffect(() => {
-        metersNameShow();
 
-    }, [])
+        });
 
-     ///assign button action start
-     const [selectedTenant, setSelectedTenant] = useState(null);
-     const [showMeterDropdown, setShowMeterDropdown] = useState(false);
-     const [metersListName, setMetersListName] = useState([]);
-   
-     const handleAssignClick = async() => {
-       setSelectedTenant(null);
-       setShowMeterDropdown(true);
-       try {
-        const response = await fetch('/meters'); // Replace with your API endpoint
-        if (response.ok) {
-          const data = await response.json();
-          setMetersListName(data); // Assuming the response contains the meters list
+        if (res.status === 200) {
+            const data = await res.json();
+            console.log(data);
+            setMetersName(data);
         } else {
-          throw new Error('Failed to fetch meters');
+            throw new Error('Failed to fetch items');
         }
-      } catch (error) {
-        console.error('Error fetching meters:', error);
-      }
-     };
+    } catch (error) {
+        console.log(error);
+        toast.error(error, {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: true
+        });
+    }
+};  
+
     const tabs = [
         {
             id: 'example1',
@@ -807,11 +745,6 @@ const Admin = () => {
                         <EuiFlexItem>
                             <EuiFormRow label="Status" >
                                 <EuiSelect options={options} value={selectedOption} onChange={handleOptionSelect} />
-                            </EuiFormRow>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                            <EuiFormRow label="Meters" >
-                                <EuiSelect options={optionsMeters} value={selectedOptionMeter} onChange={handleOptionSelectMeter} />
                             </EuiFormRow>
                         </EuiFlexItem>
                         {/* <EuiFlexItem>
@@ -874,27 +807,7 @@ const Admin = () => {
                                     ) : (
                                         <EuiTableRowCell><EuiButton color="primary" fill size="s" onClick={() => handleStatusChange(item.id, true)}>Enable</EuiButton></EuiTableRowCell>
                                     )}
-                                    <EuiTableRowCell>
-                                    
-                                    
-        
-          <EuiButton color="success" fill size="s" onClick={handleAssignClick}>
-            Assign
-          </EuiButton>
-          {showMeterDropdown  && (
-            <select>
-              {metersListName.map((meter) => (
-                <option key={meter.id} value={meter.id}>
-                  {meter.deviceName}
-                </option>
-              ))}
-            </select>
-       
-       
-      )}
-
- 
-                                    </EuiTableRowCell>
+                                    <EuiTableRowCell> <EuiButton color="success" fill size="s" onClick={handleAssignClick}>Assign</EuiButton></EuiTableRowCell>
                                     <EuiTableRowCell>
                                         <EuiFlexGroup>
                                             <EuiFlexItem >
@@ -1038,33 +951,27 @@ const Admin = () => {
             id: 'example6',
             name: 'Assign Device',
             content: (
-                <>
-                 
+                <EuiTable >
+                    <EuiTableHeader>
+                        <EuiTableHeaderCell>S.N</EuiTableHeaderCell>
+                        <EuiTableHeaderCell>Device Name</EuiTableHeaderCell>
+                        <EuiTableHeaderCell>Action</EuiTableHeaderCell>
+                    </EuiTableHeader>
+                    <EuiTableBody >
+                        {metersName.map((item,index)=>(
+                             <EuiTableRow  key={index}>
+                             <EuiTableRowCell>{index+1}</EuiTableRowCell>
+                             <EuiTableRowCell>{item.deviceName}</EuiTableRowCell>
+                             <EuiTableRowCell>
+                                 <EuiButton color="primary" fill size="s" >Assign</EuiButton>
+                                 <EuiButton color="danger" fill size="s" >Remove</EuiButton>
+                             </EuiTableRowCell>
+                         </EuiTableRow>
 
-                        <EuiTable >
-                            <EuiTableHeader>
-                                <EuiTableHeaderCell>S.N</EuiTableHeaderCell>
-                                <EuiTableHeaderCell>Device Name</EuiTableHeaderCell>
-                                <EuiTableHeaderCell>Action</EuiTableHeaderCell>
-                            </EuiTableHeader>
-                            <EuiTableBody >
-                                {metersName.map((item, index) => (
-                                    <EuiTableRow key={index}>
-                                        <EuiTableRowCell>{index + 1}</EuiTableRowCell>
-                                        <EuiTableRowCell>{item.deviceName}</EuiTableRowCell>
-                                        <EuiTableRowCell>
-                                            <EuiButton color="primary" fill size="s" >Assign</EuiButton>
-                                            <EuiButton color="danger" fill size="s" >Remove</EuiButton>
-                                        </EuiTableRowCell>
-                                    </EuiTableRow>
-
-                                ))}
-
-                            </EuiTableBody>
-                        </EuiTable>
-                 
-
-                </>
+                        ))}
+                       
+                    </EuiTableBody>
+                </EuiTable>
             ),
         },
         {
@@ -1077,8 +984,6 @@ const Admin = () => {
 
 
     const activeTab = tabs.find((tab) => tab.id === activeTabId);
-
-
     return (
         <div>
             <ul className="tab-navigation">
@@ -1104,3 +1009,64 @@ const Admin = () => {
 };
 
 export default Admin;
+
+
+///
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import Admin from "./Admin/admin";
+import User from "./User/user";
+
+const Home = () => {
+  const navigate = useNavigate();
+  const [name, setName] = useState('');
+
+
+  const callHomePage = async () => {
+    try {
+      const cookieValue = Cookies.get('token');
+
+      const res = await fetch('/home', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + cookieValue,
+        },
+        credentials: 'include',
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch user data');
+       
+      }
+
+      const data = await res.json();
+      setName(data.name);
+    } catch (err) {
+      navigate("/");
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    callHomePage();
+  }, []);
+
+  return (
+    <div className="Home">
+  
+      {
+        name === 'Admin' ?
+           <Admin />
+          :
+          <User />
+      }
+        
+      
+    </div>
+  );
+};
+
+export default Home;

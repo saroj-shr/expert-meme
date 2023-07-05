@@ -110,12 +110,12 @@ const Login = () => {
                             </EuiFlexItem>
                             <EuiSpacer size="l" />
                             <EuiSpacer size="l" />
-                            <EuiFlexItem grow={false}>
+                            {/* <EuiFlexItem grow={false}>
                                 <EuiText className="login-content-signuplink">
                                     <p>If you haven’t signed up, please </p>
                                     <a href="./signup">Sign Up.</a>
                                 </EuiText>
-                            </EuiFlexItem>
+                            </EuiFlexItem> */}
                         </EuiForm>
                     </EuiFlexGroup>
                 </EuiFlexItem>
