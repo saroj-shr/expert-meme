@@ -124,7 +124,11 @@ export async function putTenantAssignedMeter(req, res, next) {
 
   try {
     const meter = await prisma.meter.findFirst({
-      where: { meterPulse },
+      where: {
+        id: {
+          equals: meterId,
+        },
+      },
     });
 
     if (!meter) {
