@@ -1,11 +1,110 @@
-import React, { useEffect, useState } from "react";
+import { EuiForm, EuiFormRow, EuiModal, EuiModalHeader, EuiModalBody, EuiModalFooter, EuiModalHeaderTitle, EuiTabbedContent, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiFieldText, EuiLink, EuiSelect, EuiFilePicker, EuiTableHeader, EuiTableRow, EuiTableRowCell, EuiTableBody, EuiTable, EuiTableHeaderCell, EuiButton, EuiSpacer, EuiTitle, EuiText } from "@elastic/eui";
+
+
+
+import React, { useEffect, useState } from 'react';
+
+const MyModal = ({ closeModal ,handleAssignClick,meterDataList,tenentId}) => {
+    const [meter,setMeter] = useState([]);
+    const assignHandleMeter =async(idTenent,idMeter)=>{
+        console.log(idTenent,idMeter,"3333333333333333333333333333333333333333333333333");
+        try{
+            const response = await fetch(`/tenants/${idTenent}/assignedMeter/${idMeter}`,{
+                method:"PUT",
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                }
+            });
+            if(response.status == 200){
+                window.alert("meter assigned successfully");
+            }
+        }catch(error){
+            console.log(error);
+
+        }
+   
+
+    }
+    const deleteHandleMeter =async(idTenent,idMeter)=>{
+        console.log(idTenent,idMeter,"3333333333333333333333333333333333333333333333333");
+        try{
+            const response = await fetch(`/tenants/${idTenent}/assignedMeter/${idMeter}`,{
+                method:"DELETE",
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                }
+            });
+            if(response.status == 200){
+                window.alert("meter Assigned Deleted successfully");
+            }
+        }catch(error){
+            console.log(error);
+
+        }
+   
+
+    }
+    useEffect(() => {
+        document.body.style.overflowY = "hidden";
+        return () => {
+            document.body.style.overflowY = "scroll";
+        };
+    }, [])
+    useEffect(()=>{
+        setMeter(meterDataList)
+    },[])
+    return (
+        <>
+            <div className="modal-wrapper" onClick={closeModal}>
+            </div>
+            <div className="modal-container">
+               <EuiTitle><h3>Meter List</h3></EuiTitle>
+               <EuiSpacer/>
+               <EuiTable >
+                        <EuiTableHeader>
+                            <EuiTableHeaderCell>S.N</EuiTableHeaderCell>
+                            <EuiTableHeaderCell>Meter</EuiTableHeaderCell>
+                            <EuiTableHeaderCell>Action</EuiTableHeaderCell>
+                        </EuiTableHeader>
+
+                        <EuiTableBody >
+                            {meter.map((item,index)=>(
+                                <EuiTableRow  key={index}>
+                                <EuiTableRowCell>{index+1}</EuiTableRowCell>
+                                <EuiTableRowCell>{item.deviceName}</EuiTableRowCell>
+                                <EuiTableRowCell>
+                                    <EuiFlexGroup>
+                                        <EuiFlexItem >
+                                            <EuiButton color="primary" fill size="s" onClick={()=> assignHandleMeter(tenentId,item.id)}>Assign</EuiButton>
+                                        </EuiFlexItem>
+                                        <EuiFlexItem >
+                                            <EuiButton color="danger" fill size="s" onClick={()=> deleteHandleMeter(tenentId,item.id)}>Remove</EuiButton>
+                                        </EuiFlexItem>
+                                    </EuiFlexGroup>
+                                </EuiTableRowCell>
+                           </EuiTableRow>
+
+                            )) }
+                                
+                        </EuiTableBody>
+                    </EuiTable>
+
+            </div>
+          
+        </>
+    )
+}
+export default MyModal;
+
+//adminimport React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { EuiForm, EuiFormRow, EuiModal, EuiModalHeader, EuiModalBody, EuiModalFooter, EuiModalHeaderTitle, EuiTabbedContent, EuiFlexGroup, EuiFlexItem, EuiIcon, EuiFieldText, EuiLink, EuiSelect, EuiFilePicker, EuiTableHeader, EuiTableRow, EuiTableRowCell, EuiTableBody, EuiTable, EuiTableHeaderCell, EuiButton, EuiSpacer, EuiTitle, EuiText } from "@elastic/eui";
 import { ToastContainer, toast } from 'react-toastify';
 import '../../../node_modules/react-toastify/dist/ReactToastify.css';
 import Cookies from "js-cookie";
 import MyModal from "./modal";
-import MyModalRemove from "./modalRemove";
 
 
 
@@ -53,7 +152,27 @@ const Admin = () => {
     const [optionsMeters, setOptionsMeters] = useState([]);
     const [selectedOptionMeter, setSelectedOptionMeter] = useState('');
 
+    useEffect(() => {
+        // const fetchMeters = async () => {
+        //     try {
+        //         const response = await fetch('/meters');
+        //         const meters = await response.json();
+        //         const options = meters.map((meter) => ({
+        //             label: meter.deviceName,
+        //             value: meter.id,
+        //         }));
+        //         setOptionsMeters(options);
+        //     } catch (error) {
+        //         console.error(error);
+        //     }
+        // };
 
+        // fetchMeters();
+    }, []);
+
+    // const handleOptionSelectMeter = (event) => {
+    //     setSelectedOptionMeter(event.target.value);
+    // };
     /*********************meters start dropdown ends */
 
     /** All API Call For Tenants CRUD Starts  */
@@ -73,6 +192,7 @@ const Admin = () => {
 
             if (res.status === 200) {
                 const data = await res.json();
+                console.log(data);
                 setTenantsList(data);
             } else {
                 throw new Error('Failed to fetch items');
@@ -359,8 +479,11 @@ const Admin = () => {
 
 
 
+    useEffect(() => {
 
+        tenantsListShow();
 
+    }, [])
 
     /** All API Call For Tenants CRUD ends  */
 
@@ -462,6 +585,7 @@ const Admin = () => {
 
             if (res.status === 200) {
                 const data = await res.json();
+                console.log(data);
                 setMetersList(data);
             } else {
                 throw new Error('Failed to fetch items');
@@ -657,10 +781,10 @@ const Admin = () => {
 
 
 
-    // useEffect(() => {
+    useEffect(() => {
+        metersListShow();
 
-
-    // }, [])
+    }, [])
 
     // Meters CRUD ENDS 
     /************************************************************************************************************************************************************** */
@@ -677,20 +801,20 @@ const Admin = () => {
             navigate('/');
         }
     };
-    /*************************************logout complete */
+/*************************************logout complete */
 
-    /**********************show meter name api */
+/**********************show meter name api */
     ///assign button action start
     const [showModal, setShowModal] = useState(false);
     const [metersName, setMetersName] = useState([]);
-    const closeModal = () => {
+    const closeModal =() =>{
         return setShowModal(false);
     }
-    const [tenentId, setTenetId] = useState();
-
+    const [tenentId,setTenetId] =useState();
+    console.log(tenentId,"666666666666666666666666666666666666")
     const handleAssignClick = async (tenentIdSet) => {
-
-
+        console.log(tenentId,"lllllllllllllllllllllllllllllllllllllllll");
+      
         try {
             const res = await fetch('/meters', {
                 method: 'GET',
@@ -703,11 +827,13 @@ const Admin = () => {
 
             if (res.status === 200) {
                 const data = await res.json();
+
+                console.log(data);
                 setShowModal(true);
                 setMetersName(data)
                 setTenetId(tenentIdSet);
-
-
+             
+             
             } else {
                 throw new Error('Failed to fetch items');
             }
@@ -718,53 +844,11 @@ const Admin = () => {
                 autoClose: true
             });
         }
-
+ 
     };
 
-    /////
-    const [showMyModal, setShowMyModal] = useState(false);
-    const [metersMyName, setMetersMyName] = useState([]);
-    const closeMyModal = () => {
-        return setShowMyModal(false);
-    }
-
-    const handleRemoveClick = async (tenentIdSet) => {
-
-
-        try {
-            const res = await fetch(`/tenants/${tenentIdSet}/assignedMeter/`, {
-                method: 'GET',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                }
-
-            });
-
-            if (res.status === 200) {
-                const data = await res.json();
-
-
-                setShowMyModal(true);
-                setMetersMyName(data)
-                setTenetId(tenentIdSet);
-
-
-            } else {
-                throw new Error('Failed to fetch items');
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error, {
-                position: toast.POSITION.TOP_RIGHT,
-                autoClose: true
-            });
-        }
-
-    };
-
-    /**********************show meter name api */
-
+   /**********************show meter name api */
+    
     const tabs = [
         {
             id: 'example1',
@@ -809,7 +893,7 @@ const Admin = () => {
                                 <EuiSelect options={options} value={selectedOption} onChange={handleOptionSelect} />
                             </EuiFormRow>
                         </EuiFlexItem>
-
+               
                         {/* <EuiFlexItem>
                             <EuiFormRow label="Meters" >
                                 <EuiSelect options={optionsMeters} value={selectedOptionMeter} onChange={handleOptionSelectMeter} />
@@ -845,7 +929,7 @@ const Admin = () => {
         },
         {
             id: 'example3',
-            name: <div onClick={() => tenantsListShow()}>Tenant List</div>,
+            name: 'Tenants List',
             content: (
                 <>
                     <EuiTable >
@@ -858,7 +942,6 @@ const Admin = () => {
                             <EuiTableHeaderCell>Status</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Status Perform</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Meter</EuiTableHeaderCell>
-                            <EuiTableHeaderCell>Assigned Meter</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Action</EuiTableHeaderCell>
                             {/* <EuiTableHeaderCell>Remarks</EuiTableHeaderCell> */}
                         </EuiTableHeader>
@@ -877,14 +960,9 @@ const Admin = () => {
                                     ) : (
                                         <EuiTableRowCell><EuiButton color="primary" fill size="s" onClick={() => handleStatusChange(item.id, true)}>Enable</EuiButton></EuiTableRowCell>
                                     )}
-                                    {item.assignedMeter.length !== 0 ? (
-                                        <EuiTableRowCell>{item.assignedMeter[0].deviceName}</EuiTableRowCell>
-                                    ) : (
-                                        <EuiTableRowCell><EuiButton color="success" fill size="s" onClick={() => handleAssignClick(item.id)}>Assign</EuiButton></EuiTableRowCell>
-                                    )}
-
-                                    <EuiTableRowCell><EuiButton color="danger" fill size="s" onClick={() => handleRemoveClick(item.id)}>Remove</EuiButton></EuiTableRowCell>
-
+                                    <EuiTableRowCell>
+                                      <EuiButton color="success" fill size="s" onClick={()=>handleAssignClick(item.id)}>Assign</EuiButton>
+                                    </EuiTableRowCell>
                                     <EuiTableRowCell>
                                         <EuiFlexGroup>
                                             <EuiFlexItem >
@@ -901,13 +979,11 @@ const Admin = () => {
                         </EuiTableBody>
                     </EuiTable>
 
-
                 </>
 
 
 
             ),
-
 
         },
         {
@@ -978,8 +1054,7 @@ const Admin = () => {
         },
         {
             id: 'example5',
-            name: <div onClick={() => metersListShow()}>Meter List</div>,
-
+            name: 'Meter List',
             content: (
                 <EuiTable >
                     <EuiTableHeader>
@@ -1053,11 +1128,8 @@ const Admin = () => {
                 {activeTab && activeTab.content}
             </div>
             <ToastContainer />
-            {showModal && <MyModal closeModal={closeModal} handleAssignClick={handleAssignClick} meterDataList={metersName} metersListShow={metersListShow} tenentId={tenentId} tenantsListShow={tenantsListShow} />}
-            {showMyModal && <MyModalRemove closeModal={closeMyModal} meterDataList={metersMyName} activeTabId={setActiveTabId} metersListShow={metersListShow} tenentId={tenentId} tenantsListShow={tenantsListShow} />}
-
+            {showModal && <MyModal closeModal={closeModal} handleAssignClick={ handleAssignClick }  meterDataList={metersName} tenentId={tenentId}/> }
         </div>
-
 
         //     <div className="admin-pannl">
         //         <EuiTabbedContent

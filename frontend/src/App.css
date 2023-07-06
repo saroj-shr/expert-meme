@@ -79,3 +79,28 @@ box-shadow: 1px 2px 5px 0px rgba(0,0,0,0.26)!important;
 p{
   cursor: pointer;
 }
+
+.modal-wrapper{
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  right:0;
+  background-color: rgba(189,189,189,0.9);
+}
+.modal-container{
+  position: fixed;
+  max-width:49rem;
+  top:31%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  background-color: #fff;
+  padding:2rem 3.9rem;
+  border-radius: 0.5rem;
+  -webkit-box-shadow: 1px 1px 15px 5px rgba(0,0,0,0.06); 
+  box-shadow: 1px 1px 15px 5px rgba(0,0,0,0.06);
+
+}
+.modal-container h1{
+  font-size: 48px;
+}
