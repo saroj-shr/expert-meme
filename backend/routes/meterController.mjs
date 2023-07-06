@@ -143,6 +143,26 @@ export async function getMeterPowerConsumption(req, res, next) {
   }
 }
 
+// PUT /meters/:id/calcPowerConsumption
+export async function putCalcPowerConsumption(req, res, next) {
+  const { id } = req.params;
+
+  try {
+    const meter = await prisma.meter.findUnique({
+      where: { id },
+      include: { meterPulse: true },
+    });
+
+    if (!meter) {
+      return res.status(404).json({ message: "Meter not found" });
+    }
+
+    res.status(200).json(meter.PowerConsumption);
+  } catch (error) {
+    next(error);
+  }
+}
+
 // PUT /meters/:id/status
 export async function updateMetersStatus(req, res, next) {
   const { id } = req.params;

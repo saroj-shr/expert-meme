@@ -51,9 +51,10 @@ model Meter {
 }
 
 model Pulse {
-  id         String   @id @default(cuid())
-  pulseCount Int
-  createdAt  DateTime @default(now())
+  id            String   @id @default(cuid())
+  pulseCount    Int
+  createdAt     DateTime @default(now())
+  is_calculated Boolean  @default(false)
 
   Meter   Meter?  @relation(fields: [meterId], references: [id])
   meterId String?
@@ -67,4 +68,11 @@ model PowerConsumption {
 
   meter   Meter  @relation(fields: [meterId], references: [id])
   meterId String
+}
+
+model StandardCost {
+  id         String   @id @default(cuid())
+  costPerKwh Float    @default(12.0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

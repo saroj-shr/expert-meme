@@ -81,8 +81,8 @@ router.get("/powerConsumptions/:id/meter", getPowerConsumptionMeter);
 router.get("/pulses", getAllPulses);
 router.get("/pulses/:id", getPulseById);
 router.post("/pulses", createPulse);
-router.put("/pulses/:id", updatePulse);
-router.delete("/pulses/:id", deletePulse);
+// router.put("/pulses/:id", updatePulse);
+// router.delete("/pulses/:id", deletePulse);
 router.get("/pulses/:id/meter", getPulseMeter);
 
 // Tenant routes

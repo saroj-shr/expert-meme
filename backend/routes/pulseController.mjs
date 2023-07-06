@@ -7,7 +7,6 @@
 //     DELETE /pulses/{id}: Delete a pulse by ID.
 //     GET /pulses/{id}/meter: Get the meter associated with a specific pulse.
 
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -50,7 +49,7 @@ export async function createPulse(req, res, next) {
     const pulse = await prisma.pulse.create({
       data: {
         pulseCount,
-        meter: { connect: { id: meterId } },
+        meterId,
       },
     });
 
