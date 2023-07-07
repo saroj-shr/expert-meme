@@ -109,6 +109,10 @@ const Admin = () => {
 
         if (!firstName || !lastName || !email || !phoneNumber) {
             console.log("Please fill all fields");
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
             return;
         }
 
@@ -137,10 +141,20 @@ const Admin = () => {
                     autoClose: true
                 });
                 console.log("Tenants Added Successfully");
-                // Fetch the updated list of tenants from the backend
-                const updatedTenantsResponse = await fetch("/tenants");
-                const updatedTenantsData = await updatedTenantsResponse.json();
-                setTenantsList(updatedTenantsData); // Update the tenants list state with the new data
+                // Set the input fields to empty
+                setTenants({
+                    id: "",
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    phoneNumber: "",
+                    status: true,
+                });
+
+                // // Fetch the updated list of tenants from the backend
+                // const updatedTenantsResponse = await fetch("/tenants");
+                // const updatedTenantsData = await updatedTenantsResponse.json();
+                // setTenantsList(updatedTenantsData); // Update the tenants list state with the new data
 
             } else {
                 const errors = data.errors;
@@ -238,6 +252,7 @@ const Admin = () => {
                     position: toast.POSITION.TOP_RIGHT,
                     autoClose: true,
                 });
+               
                 setActiveTabId("example2");
             } else if (res.status === 404) {
                 throw new Error('Tenant not found');
@@ -258,6 +273,10 @@ const Admin = () => {
 
         if (!firstName || !lastName || !email || !phoneNumber) {
             console.log("Please fill all fields");
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
             return;
         }
 
@@ -285,10 +304,19 @@ const Admin = () => {
                     autoClose: true
                 });
                 console.log("Tenants Edited Successfully");
-                // Fetch the updated list of tenants from the backend
-                const updatedTenantsResponse = await fetch("/tenants");
-                const updatedTenantsData = await updatedTenantsResponse.json();
-                setTenantsList(updatedTenantsData); // Update the tenants list state with the new data
+                  // Set the input fields to empty
+                  setTenants({
+                    id: "",
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    phoneNumber: "",
+                    status: true,
+                });
+                // // Fetch the updated list of tenants from the backend
+                // const updatedTenantsResponse = await fetch("/tenants");
+                // const updatedTenantsData = await updatedTenantsResponse.json();
+                // setTenantsList(updatedTenantsData); // Update the tenants list state with the new data
 
             } else {
                 const errors = data.errors;
@@ -391,6 +419,10 @@ const Admin = () => {
 
         if (!hardwareId || !deviceName || !manufacture) {
             console.log("Please fill all fields");
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
             return;
         }
 
@@ -416,6 +448,14 @@ const Admin = () => {
                     autoClose: true,
                 });
                 console.log("meters Added Successfully");
+                setmeters({
+                    id: "",
+                    impkwh: "",
+                    hardwareId: "",
+                    deviceName: "",
+                    manufacture: "",
+                    status: true,
+                })
                 // Fetch the updated list of meters from the backend
                 const updatedmetersResponse = await fetch("/meters");
                 const updatedmetersData = await updatedmetersResponse.json();
@@ -559,6 +599,11 @@ const Admin = () => {
 
         if (!hardwareId || !deviceName || !manufacture) {
             console.log("Please fill all fields");
+
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
             return;
         }
         try {
@@ -583,10 +628,18 @@ const Admin = () => {
                     autoClose: true
                 });
                 console.log("Meters Edited Successfully");
-                // Fetch the updated list of tenants from the backend
-                const updatedMetersResponse = await fetch("/meters");
-                const updatedMetersData = await updatedMetersResponse.json();
-                setMetersList(updatedMetersData); // Update the tenants list state with the new data
+                setmeters({
+                    id: "",
+                    impkwh: "",
+                    hardwareId: "",
+                    deviceName: "",
+                    manufacture: "",
+                    status: true,
+                })
+                // // Fetch the updated list of tenants from the backend
+                // const updatedMetersResponse = await fetch("/meters");
+                // const updatedMetersData = await updatedMetersResponse.json();
+                // setMetersList(updatedMetersData); // Update the tenants list state with the new data
 
             } else {
                 const errors = data.errors;
@@ -657,10 +710,6 @@ const Admin = () => {
 
 
 
-    // useEffect(() => {
-
-
-    // }, [])
 
     // Meters CRUD ENDS 
     /************************************************************************************************************************************************************** */
@@ -764,6 +813,309 @@ const Admin = () => {
     };
 
     /**********************show meter name api */
+
+
+    /******************************************************************************************************************************************* */
+
+    /** Cash API Call CRUD */
+
+    // Add new cash
+    const [cash, setcash] = useState({
+        costPerKwhNew: 0.0,
+    });
+
+    const handleInputscash = (e) => {
+        const { name, value } = e.target;
+        setcash({ ...cash, [name]: value });
+    };
+
+    const addcash = async (e) => {
+        if (e) {
+            e.preventDefault();
+        }
+
+
+        const { costPerKwhNew } = cash;
+        // Convert costPerKwh from string to float
+        const costPerKwh = parseFloat(costPerKwhNew);
+        console.log(costPerKwh, "PPPPPPPPPPPPPppppp")
+
+
+        if (!costPerKwh) {
+            console.log("Please fill all fields");
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+            return;
+        }
+
+        try {
+            const response = await fetch("/cash", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    costPerKwh
+                }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success("Cash Added Successfully", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: true,
+                });
+                setcash({
+                    costPerKwhNew: 0.0,
+                })
+                console.log("cash Added Successfully");
+            } else {
+                const errors = data.errors;
+                if (errors) {
+                    console.log("Backend Errors:", Object.values(errors).join("\n"));
+                    const errorMessage = Object.values(errors).join("\n");
+                    toast.error(errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true,
+                    });
+                } else {
+                    toast.error("Invalid Cash Added", {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true,
+                    });
+                    console.log("Invalid Cash Added");
+                }
+            }
+        } catch (error) {
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true,
+            });
+            console.log("Error:", error);
+        }
+    };
+
+
+
+    //get all cash
+    const [cashList, setCashList] = useState([]);
+
+    const cashListShow = async () => {
+        try {
+            const res = await fetch('/cash', {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+            });
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setCashList(data);
+            } else {
+                throw new Error('Failed to fetch cash');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+        }
+    };
+    // Delete API call for cash
+    const deleteCashRequest = async (id) => {
+
+        try {
+            const res = await fetch(`/cash/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (res.status === 204) {
+                setCashList((prevcashList) =>
+                    prevcashList.filter((cash) => cash.id !== id)
+                );
+                toast.success("Cash deleted successfully", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: true
+                });
+
+            } else {
+                throw new Error('Failed to delete Cash');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+        }
+    };
+
+    //get id data api call for cash
+    const [isEditingCash, setIsEditingCash] = useState(false);
+
+    const editCashRequest = async (id) => {
+        console.log(id);
+
+        try {
+            const res = await fetch(`/cash/${id}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (res.status === 200) { // Check for a successful response
+                const updatedCash = await res.json(); // Parse the response body
+                setIsEditingCash(true);
+                setcash({
+                    id: updatedCash.id,
+                    costPerKwhNew: updatedCash.costPerKwh,
+                });
+                toast.success('Cash edited Request Send successfully', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: true,
+                });
+                setActiveTabId('example6');
+            } else if (res.status === 404) {
+                throw new Error('Cash not found');
+            } else {
+                throw new Error('Cash to edit tenants');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.message, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true,
+            });
+        }
+    };
+
+    //edit api back for cash
+    const editCash = async (id) => {
+        const { costPerKwhNew } = cash;
+        // Convert costPerKwh from string to float
+        const costPerKwh = parseFloat(costPerKwhNew);
+
+        if (!costPerKwh) {
+            console.log("Please fill all fields");
+            toast.error("Please fill all fields", {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+            return;
+        }
+        try {
+            const response = await fetch(`/cash/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    costPerKwh
+
+                }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success("Cash Edited Successfully", {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: true
+                });
+                setcash({
+                    costPerKwhNew: 0.0,
+                })
+                console.log("Cash Edited Successfully");
+                // Fetch the updated list of cash from the backend
+                const updatedCashResponse = await fetch("/cash");
+                const updatedCashData = await updatedCashResponse.json();
+                setMetersList(updatedCashData); // Update the cash list state with the new data
+
+            } else {
+                const errors = data.errors;
+                if (errors) {
+                    console.log("Backend Errors:", Object.values(errors).join("\n"));
+                    const errorMessage = Object.values(errors).join("\n");
+                    toast.error(errorMessage, {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true
+                    });
+
+
+                } else {
+                    toast.error("Invalid Cash Edited", {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true
+                    });
+
+                    console.log("Invalid Cash Edited");
+                }
+            }
+
+        } catch (error) {
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+            console.log("Error:", error);
+
+        }
+
+    }
+    // // Handle status change for Meters
+    // const handleStatusChangeMeters = async (id, status) => {
+    //     try {
+    //         const res = await fetch(`/meters/${id}/status`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ status }),
+    //         });
+
+    //         if (res.status === 200) {
+    //             // Update the tenantsList state or the data source where you store the data
+    //             const updatedMetersList = metersList.map((item) => {
+    //                 if (item.id === id) {
+    //                     return { ...item, status };
+    //                 }
+    //                 return item;
+    //             });
+    //             toast.success("Status Updated Successfully", {
+    //                 position: toast.POSITION.TOP_RIGHT,
+    //                 autoClose: true
+    //             });
+    //             setMetersList(updatedMetersList);
+    //         } else {
+    //             throw new Error('Failed to update status');
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error(error.message, {
+    //             position: toast.POSITION.TOP_RIGHT,
+    //             autoClose: true,
+    //         });
+    //     }
+    // };
+
+
+
+
+
+    // Cash CRUD ENDS 
+    /************************************************************************************************************************************************************** */
+
 
     const tabs = [
         {
@@ -1027,9 +1379,73 @@ const Admin = () => {
             ),
 
         },
-
         {
             id: 'example6',
+            name: 'Cash Add',
+            content: (
+                <EuiForm component="form" >
+                    <EuiSpacer />
+                    <EuiFlexItem>
+                        <EuiFormRow label="CostPerKwh" >
+                            <EuiFieldText name="costPerKwhNew" onChange={handleInputscash} value={cash.costPerKwhNew} />
+                        </EuiFormRow>
+                    </EuiFlexItem>
+                    <EuiSpacer />
+                    <EuiSpacer />
+                    {isEditingCash ? (
+                        <EuiButton type="button" fill onClick={() => { editCash(cash.id) }} >
+                            Edit Cash
+                        </EuiButton>
+                    ) : (
+                        <EuiButton type="button" fill onClick={addcash} >
+                            Save Cash
+                        </EuiButton>
+                    )}
+
+                </EuiForm>
+
+
+
+            ),
+        },
+        {
+            id: 'example7',
+            name: <div onClick={() => cashListShow()}>Cash List</div>,
+
+            content: (
+                <EuiTable >
+                    <EuiTableHeader>
+                        <EuiTableHeaderCell>S.N</EuiTableHeaderCell>
+                        <EuiTableHeaderCell>CostPerKwh</EuiTableHeaderCell>
+                        <EuiTableHeaderCell>Action</EuiTableHeaderCell>
+                    </EuiTableHeader>
+                    <EuiTableBody >
+                        {cashList.map((item, index) => (
+                            <EuiTableRow key={index} >
+                                <EuiTableRowCell>{index + 1}</EuiTableRowCell>
+                                <EuiTableRowCell>{item.costPerKwh}</EuiTableRowCell>
+                                <EuiTableRowCell>
+                                    <EuiFlexGroup>
+                                        <EuiFlexItem >
+                                            <EuiButton color="primary" fill size="s" onClick={() => editCashRequest(item.id)}><EuiIcon type="documentEdit" size="m" /></EuiButton>
+                                        </EuiFlexItem>
+                                        <EuiFlexItem >
+                                            <EuiButton color="danger" fill size="s" onClick={() => deleteCashRequest(item.id)}><EuiIcon type="trash" size="m" /></EuiButton>
+                                        </EuiFlexItem>
+                                    </EuiFlexGroup>
+                                </EuiTableRowCell>
+                            </EuiTableRow>
+                        ))}
+                    </EuiTableBody>
+                </EuiTable>
+
+            ),
+
+        },
+
+
+        {
+            id: 'example8',
             name: 'Logout',
             content: <p onClick={() => callLogout()}>Logout</p>,
         }

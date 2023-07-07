@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 
 const MyModalRemove = ({ closeModal ,meterDataList,metersListShow,tenantsListShow,tenentId}) => {
     const [meter, setMeter] = useState([]);
+  
 
   const assignRemoveMeter = async (idTenent, idMeter) => {
     try {
@@ -22,8 +23,9 @@ const MyModalRemove = ({ closeModal ,meterDataList,metersListShow,tenantsListSho
           position: toast.POSITION.TOP_RIGHT,
           autoClose: true
         });
-
+       
         closeModal();
+       
       }
     } catch (error) {
       console.log(error);
@@ -35,10 +37,7 @@ const MyModalRemove = ({ closeModal ,meterDataList,metersListShow,tenantsListSho
   }
 
   const fetchData = async () => {
-    metersListShow();
     tenantsListShow();
-
-    
   };
 
   useEffect(() => {

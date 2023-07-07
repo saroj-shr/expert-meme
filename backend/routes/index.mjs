@@ -45,6 +45,16 @@ import {
   login,
 } from "./usersController.mjs";
 import { Home } from "./homeController.mjs";
+import {
+  getAllCash,
+  getCashById,
+  createCash,
+  updateCash,
+  deleteCash,
+  
+} from "./cashController.mjs";
+
+
 
 //middleware
 import { Authenticate } from "../middleware/authenticate.js";
@@ -103,5 +113,13 @@ router.post("/users", createUser);
 router.put("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
 router.post("/login", login);
+
+// Cash routes
+router.get("/cash", getAllCash);
+router.get("/cash/:id", getCashById);
+router.post("/cash", createCash);
+router.put("/cash/:id", updateCash);
+router.delete("/cash/:id", deleteCash);
+
 
 export default router;

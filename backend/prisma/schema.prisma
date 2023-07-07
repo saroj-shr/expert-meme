@@ -72,7 +72,7 @@ model PowerConsumption {
 
 model StandardCost {
   id         String   @id @default(cuid())
-  costPerKwh Float    @default(12.0)
+  costPerKwh Float    
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
