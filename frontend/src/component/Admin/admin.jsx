@@ -1073,43 +1073,7 @@ const Admin = () => {
         }
 
     }
-    // // Handle status change for Meters
-    // const handleStatusChangeMeters = async (id, status) => {
-    //     try {
-    //         const res = await fetch(`/meters/${id}/status`, {
-    //             method: 'PUT',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({ status }),
-    //         });
-
-    //         if (res.status === 200) {
-    //             // Update the tenantsList state or the data source where you store the data
-    //             const updatedMetersList = metersList.map((item) => {
-    //                 if (item.id === id) {
-    //                     return { ...item, status };
-    //                 }
-    //                 return item;
-    //             });
-    //             toast.success("Status Updated Successfully", {
-    //                 position: toast.POSITION.TOP_RIGHT,
-    //                 autoClose: true
-    //             });
-    //             setMetersList(updatedMetersList);
-    //         } else {
-    //             throw new Error('Failed to update status');
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //         toast.error(error.message, {
-    //             position: toast.POSITION.TOP_RIGHT,
-    //             autoClose: true,
-    //         });
-    //     }
-    // };
-
-
+    
 
 
 
@@ -1386,7 +1350,7 @@ const Admin = () => {
                 <EuiForm component="form" >
                     <EuiSpacer />
                     <EuiFlexItem>
-                        <EuiFormRow label="CostPerKwh" >
+                        <EuiFormRow label="Cost Per Kwh" >
                             <EuiFieldText name="costPerKwhNew" onChange={handleInputscash} value={cash.costPerKwhNew} />
                         </EuiFormRow>
                     </EuiFlexItem>

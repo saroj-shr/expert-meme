@@ -11,7 +11,7 @@
     "dev": "nodemon index.mjs",
     "seed": "node ./prisma/seed.js",
     "studio": "npx prisma studio",
-    "postgres:up": "podman run -d --name psql -p 5432:5432 -e POSTGRES_PASSWORD=mypassword postgres",
+    "postgres:up": "podman run -d --name psql -p 5432:5432 -e POSTGRES_PASSWORD=mypassword docker.io/postgres",
     "postgres:stop": "podman stop psql",
     "postgres:remove": "podman rm psql"
   },
