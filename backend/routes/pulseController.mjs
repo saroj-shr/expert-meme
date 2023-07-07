@@ -44,7 +44,6 @@ export async function getPulseById(req, res, next) {
 // POST /pulses
 export async function createPulse(req, res, next) {
   const { pulseCount, meterId } = req.body;
-
   try {
     const pulse = await prisma.pulse.create({
       data: {
@@ -52,7 +51,6 @@ export async function createPulse(req, res, next) {
         meterId,
       },
     });
-
     res.status(201).json(pulse);
   } catch (error) {
     next(error);

@@ -17,7 +17,7 @@ app.use(cookieParser());
 // await connect();
 
 app.use(indexRouter);
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running ${port}`);
 });
 
