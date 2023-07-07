@@ -9,7 +9,11 @@
   "scripts": {
     "start": "node index.mjs",
     "dev": "nodemon index.mjs",
-    "seed": "node ./prisma/seed.js"
+    "seed": "node ./prisma/seed.js",
+    "studio": "npx prisma studio",
+    "postgres:up": "podman run -d --name psql -p 5432:5432 -e POSTGRES_PASSWORD=mypassword postgres",
+    "postgres:stop": "podman stop psql",
+    "postgres:remove": "podman rm psql"
   },
   "dependencies": {
     "@prisma/client": "4.16.2",

@@ -19,6 +19,12 @@ async function seed() {
       });
     }
 
+    await prisma.standardCost.create({
+      data: {
+        costPerKwh: 15.0,
+      },
+    });
+
     console.log("User seed data inserted successfully.");
   } catch (error) {
     console.error("Error seeding user data:", error);

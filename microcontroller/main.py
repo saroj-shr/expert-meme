@@ -10,10 +10,11 @@ import uasyncio as asyncio
 esp.osdebug(None)
 gc.collect()
 
-ssid = "sarojshrestha_2.4"
-password = "CLEB263F00Naruto"
-url = "http://192.168.10.69:8080/pulses"
+ssid = "wifi"
+password = "password"
+url = "http://192.168.1.1:8080/pulses"
 shared_currentCount = 0
+meterId = "cljs051hq00026wxb2ivrixw3"
 
 def blink(led_pin):
     led_pin.on()
@@ -63,7 +64,7 @@ async def send_pulse():
             print("send_pulse")
             payload = json.dumps({
                 "pulseCount": shared_currentCount,
-                "meterId": "cljs051hq00026wxb2ivrixw3"
+                "meterId": meterId
             })
             headers = {
                 'Content-Type': 'application/json'
@@ -79,4 +80,3 @@ loop = asyncio.get_event_loop()
 loop.create_task(scan_pulse())
 loop.create_task(send_pulse())
 loop.run_forever()
-    
