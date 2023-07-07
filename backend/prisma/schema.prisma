@@ -47,7 +47,7 @@ model Meter {
   tenantId String?
 
   meterPulse       Pulse[]
-  PowerConsumption PowerConsumption[]
+  PowerConsumption PowerConsumption?
 }
 
 model Pulse {
@@ -67,12 +67,12 @@ model PowerConsumption {
   updatedAt   DateTime @updatedAt
 
   meter   Meter  @relation(fields: [meterId], references: [id])
-  meterId String
+  meterId String @unique
 }
 
 model StandardCost {
   id         String   @id @default(cuid())
-  costPerKwh Float    
+  costPerKwh Float
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

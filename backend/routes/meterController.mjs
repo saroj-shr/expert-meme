@@ -129,17 +129,61 @@ export async function getMeterPulses(req, res, next) {
 export async function getMeterPowerConsumption(req, res, next) {
   const { id } = req.params;
 
+  let perviousConsumption = 0.0;
   try {
-    const meter = await prisma.meter.findUnique({
+    // get all the pulses with meter id and is_calculated is false
+    const meter = await prisma.meter.findMany({
       where: { id },
-      include: { PowerConsumption: true },
+      include: {
+        PowerConsumption: true,
+        meterPulse: {
+          where: {
+            is_calculated: false,
+          },
+        },
+      },
+    });
+    // console.log(meter);
+    const { costPerKwh } = await prisma.standardCost.findFirst({
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     if (!meter) {
       return res.status(404).json({ message: "Meter not found" });
     }
 
-    res.status(200).json(meter.PowerConsumption);
+    let kwh = 0.0;
+    meter.forEach(async (entry) => {
+      perviousConsumption = entry.PowerConsumption.consumption;
+      for (const { id, pulseCount } of entry.meterPulse) {
+        kwh = kwh + parseInt(pulseCount) / entry.impkwh;
+        await prisma.pulse.update({
+          where: {
+            id,
+          },
+          data: {
+            is_calculated: true,
+          },
+        });
+      }
+    });
+
+    const data = await prisma.powerConsumption.upsert({
+      where: {
+        meterId: id,
+      },
+      create: {
+        consumption: kwh * costPerKwh,
+        meter: { connect: { id } },
+      },
+      update: {
+        consumption: perviousConsumption + kwh * costPerKwh,
+      },
+    });
+
+    res.status(200).json(data);
   } catch (error) {
     next(error);
   }
