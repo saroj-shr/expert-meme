@@ -6,6 +6,7 @@ import '../../../node_modules/react-toastify/dist/ReactToastify.css';
 import Cookies from "js-cookie";
 import MyModal from "./modal";
 import MyModalRemove from "./modalRemove";
+import MyPower from "./powerConsumptionModal";
 
 
 
@@ -1079,8 +1080,49 @@ const Admin = () => {
 
     // Cash CRUD ENDS 
     /************************************************************************************************************************************************************** */
+  /************************************************************view power consumption start*/
+  const [showMyPowerModal, setShowMyPowerModal] = useState(false);
 
+    const closeMyPowerModal = () => {
+        return setShowMyPowerModal(false);
+    }
 
+  const [powerConsumption,setPowerConsumption] = useState([]);
+  const viewPowerConsumption = async(id)=>{
+    console.log("button clicked")
+    console.log(id,"jjjjjjjjjjjjjjjjjjjjjjjj")
+        try {
+            const res = await fetch(`/meters/${id}/powerConsumption`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+            });
+
+            if (res.status === 200) {
+                const data = await res.json();
+                setPowerConsumption(data);
+                setShowMyPowerModal(true);
+            } else {
+                toast.error('Failed to Show Power Consumption', {
+                    position: toast.POSITION.TOP_RIGHT,
+                    autoClose: true
+                });
+                // throw new Error('Failed to Show Power Consumption');
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error, {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true
+            });
+        }
+    
+
+  }
+  /************************************************************view power consumption start*/
     const tabs = [
         {
             id: 'example1',
@@ -1175,6 +1217,7 @@ const Admin = () => {
                             <EuiTableHeaderCell>Status Perform</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Meter</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Assigned Meter</EuiTableHeaderCell>
+                            <EuiTableHeaderCell>Power Consumption</EuiTableHeaderCell>
                             <EuiTableHeaderCell>Action</EuiTableHeaderCell>
                             {/* <EuiTableHeaderCell>Remarks</EuiTableHeaderCell> */}
                         </EuiTableHeader>
@@ -1200,7 +1243,7 @@ const Admin = () => {
                                     )}
 
                                     <EuiTableRowCell><EuiButton color="danger" fill size="s" onClick={() => handleRemoveClick(item.id)}>Remove</EuiButton></EuiTableRowCell>
-
+                                    <EuiTableRowCell><EuiButton color="primary" fill size="s" onClick={()=> viewPowerConsumption(item.assignedMeter[0].id)}>View</EuiButton></EuiTableRowCell>
                                     <EuiTableRowCell>
                                         <EuiFlexGroup>
                                             <EuiFlexItem >
@@ -1345,7 +1388,7 @@ const Admin = () => {
         },
         {
             id: 'example6',
-            name: 'Cash Add',
+            name: 'CostPerKwh Add',
             content: (
                 <EuiForm component="form" >
                     <EuiSpacer />
@@ -1374,7 +1417,7 @@ const Admin = () => {
         },
         {
             id: 'example7',
-            name: <div onClick={() => cashListShow()}>Cash List</div>,
+            name: <div onClick={() => cashListShow()}>CostPerKwh List</div>,
 
             content: (
                 <EuiTable >
@@ -1435,6 +1478,7 @@ const Admin = () => {
             <ToastContainer />
             {showModal && <MyModal closeModal={closeModal} handleAssignClick={handleAssignClick} meterDataList={metersName} metersListShow={metersListShow} tenentId={tenentId} tenantsListShow={tenantsListShow} />}
             {showMyModal && <MyModalRemove closeModal={closeMyModal} meterDataList={metersMyName} activeTabId={setActiveTabId} metersListShow={metersListShow} tenentId={tenentId} tenantsListShow={tenantsListShow} />}
+            {showMyPowerModal && <MyPower closeModal={closeMyPowerModal } powerConsumption={powerConsumption}  />}
 
         </div>
 
