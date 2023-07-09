@@ -36,7 +36,7 @@ const Admin = () => {
         setSelectedOption(selectedValue);
         setTenants({ ...tenants, status: selectedValue === 'option1' ? true : false });
     };
-
+   
     const handleOptionSelect1 = (event) => {
         const selectedValue1 = event.target.value;
         setSelectedOption1(selectedValue1);
@@ -97,10 +97,33 @@ const Admin = () => {
         status: true,
 
     });
-
+    const [showValidationMessage, setShowValidationMessage] = useState(false);
+    const [showValidationfirstNameMessage, setShowValidationfirstNameMessage] = useState(false);
+    const [showValidationlastNameMessage, setShowValidationlastNameMessage] = useState(false);
+    const [showValidationPhoneMessage, setShowValidationPhoneMessage] = useState(false);
     const handleInputs = (e) => {
         const { name, value } = e.target;
         setTenants({ ...tenants, [name]: value });
+        //email invalid show in span 
+        if (name === 'email') {
+            const isValidEmail = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/.test(value);
+            setShowValidationMessage(!isValidEmail && value !== '');
+        }
+         //first name invalid show in span if we type other than string
+        if (name === 'firstName' ) {
+            const isValidName = /^[A-Za-z]+$/i.test(value);
+            setShowValidationfirstNameMessage(!isValidName && value !== '');
+        }
+        //last name invalid show in span if we type other than string
+        if (name === 'lastName' ) {
+            const isValidName = /^[A-Za-z]+$/i.test(value);
+            setShowValidationlastNameMessage(!isValidName && value !== '');
+        }
+        //number invalid show in span if we type other than 97 98 01 start
+        if (name === 'phoneNumber') {
+            const isValidPhoneNumber = /^(98|97|01)\d{8}$/.test(value) && value.length === 10;
+            setShowValidationPhoneMessage(!isValidPhoneNumber && value !== '');
+          }
     };
 
 
@@ -116,6 +139,35 @@ const Admin = () => {
             });
             return;
         }
+        //apply name validation
+        const isValidName = /^[A-Za-z]+$/i.test(firstName) && /^[A-Za-z]+$/i.test(lastName);
+        if (!isValidName) {
+          toast.error('Please enter a valid name', {
+            position: toast.POSITION.TOP_RIGHT,
+            autoClose: true,
+          });
+          return;
+        }
+      
+        //check email validation correct
+        const isValidEmail = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/.test(email);
+        if (!isValidEmail) {
+            toast.error('Please enter a valid email address', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: true,
+            });
+            return;
+          }
+        //check phoneNumber validation correct
+          const isValidPhoneNumber = /^(98|97|01)\d{8}$/.test(phoneNumber) && phoneNumber.length === 10;  
+          if (!isValidPhoneNumber) {
+            toast.error('Please enter a valid phone number', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: true,
+            });
+            return;
+          }
+
 
         try {
             const response = await fetch("/tenants", {
@@ -135,6 +187,7 @@ const Admin = () => {
                 }),
             });
             const data = await response.json();
+         
 
             if (response.ok) {
                 toast.success("Tenants Added Successfully", {
@@ -159,7 +212,14 @@ const Admin = () => {
 
             } else {
                 const errors = data.errors;
-                if (errors) {
+                if(response.status === 400){
+                    toast.error("Tenants Already Exits!", {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true
+                    });
+    
+                }
+                else if (errors) {
                     console.log("Backend Errors:", Object.values(errors).join("\n"));
                     const errorMessage = Object.values(errors).join("\n");
                     toast.error(errorMessage, {
@@ -281,6 +341,36 @@ const Admin = () => {
             return;
         }
 
+          //apply name validation
+          const isValidName = /^[A-Za-z]+$/i.test(firstName) && /^[A-Za-z]+$/i.test(lastName);
+          if (!isValidName) {
+            toast.error('Please enter a valid name', {
+              position: toast.POSITION.TOP_RIGHT,
+              autoClose: true,
+            });
+            return;
+          }
+        
+          //check email validation correct
+          const isValidEmail = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/.test(email);
+          if (!isValidEmail) {
+              toast.error('Please enter a valid email address', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true,
+              });
+              return;
+            }
+          //check phoneNumber validation correct
+            const isValidPhoneNumber = /^(98|97|01)\d{8}$/.test(phoneNumber) && phoneNumber.length === 10;  
+            if (!isValidPhoneNumber) {
+              toast.error('Please enter a valid phone number', {
+                position: toast.POSITION.TOP_RIGHT,
+                autoClose: true,
+              });
+              return;
+            }
+  
+
         try {
             const response = await fetch(`/tenants/${id}`, {
                 method: "PUT",
@@ -321,7 +411,15 @@ const Admin = () => {
 
             } else {
                 const errors = data.errors;
-                if (errors) {
+                if(response.status == 400){
+                    toast.error("Email Already Exist!"
+                    , {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true
+                    });
+
+                }
+                else if (errors) {
                     console.log("Backend Errors:", Object.values(errors).join("\n"));
                     const errorMessage = Object.values(errors).join("\n");
                     toast.error(errorMessage, {
@@ -398,6 +496,8 @@ const Admin = () => {
     /** Meter API Call CRUD */
 
     // Add new meters
+   
+
     const [meters, setmeters] = useState({
         id: "",
         impkwh: "",
@@ -406,11 +506,17 @@ const Admin = () => {
         manufacture: "",
         status: true,
     });
-
+ 
     const handleInputsmeters = (e) => {
         const { name, value } = e.target;
         setmeters({ ...meters, [name]: value });
+
+
+      
+
     };
+
+  
 
     const addmeters = async (e) => {
         if (e) {
@@ -461,9 +567,20 @@ const Admin = () => {
                 const updatedmetersResponse = await fetch("/meters");
                 const updatedmetersData = await updatedmetersResponse.json();
                 setMetersList(updatedmetersData); // Update the meters list state with the new data
+              
+
+
             } else {
                 const errors = data.errors;
-                if (errors) {
+                if(response.status == 400){
+                    toast.error("Device Already Exist!"
+                    , {
+                        position: toast.POSITION.TOP_RIGHT,
+                        autoClose: true
+                    });
+
+                }
+                else if (errors) {
                     console.log("Backend Errors:", Object.values(errors).join("\n"));
                     const errorMessage = Object.values(errors).join("\n");
                     toast.error(errorMessage, {
@@ -1138,19 +1255,32 @@ const Admin = () => {
                     <EuiFlexGroup>
                         <EuiFlexItem>
                             <EuiFormRow label="First Name" >
+                                <>
                                 <EuiFieldText name="firstName" onChange={handleInputs} value={tenants.firstName} />
+                                {showValidationfirstNameMessage && (<p style={{ color: 'red' }}>Please enter a valid First Name</p>)}
+                                </>
+                              
                             </EuiFormRow>
                         </EuiFlexItem>
 
                         <EuiFlexItem>
                             <EuiFormRow label="Last Name" >
+                                <>
                                 <EuiFieldText name="lastName" onChange={handleInputs} value={tenants.lastName} />
+                                {showValidationlastNameMessage && (<p style={{ color: 'red' }}>Please enter a valid Last Name</p>)}
+                                </>
+                           
                             </EuiFormRow>
                         </EuiFlexItem>
 
                         <EuiFlexItem>
                             <EuiFormRow label="Email" >
+                                <>
                                 <EuiFieldText name="email" onChange={handleInputs} value={tenants.email} />
+                                {showValidationMessage && (<p style={{ color: 'red' }}>Please enter a valid email address</p>)}
+                                </>
+                               
+
                             </EuiFormRow>
                         </EuiFlexItem>
                     </EuiFlexGroup>
@@ -1159,15 +1289,24 @@ const Admin = () => {
                     <EuiFlexGroup>
                         <EuiFlexItem>
                             <EuiFormRow label="Phone Number" >
+                                <>
                                 <EuiFieldText name="phoneNumber" onChange={handleInputs} value={tenants.phoneNumber} />
-                            </EuiFormRow>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                            <EuiFormRow label="Status" >
-                                <EuiSelect options={options} value={selectedOption} onChange={handleOptionSelect} />
+                                {showValidationPhoneMessage && (<p style={{ color: 'red' }}>Please enter a valid phone number</p>)}
+                                </>
+                               
                             </EuiFormRow>
                         </EuiFlexItem>
 
+                        {isEditing &&
+                             <EuiFlexItem>
+                             <EuiFormRow label="Status" >
+                                 <EuiSelect options={options} value={selectedOption} onChange={handleOptionSelect} />
+                             </EuiFormRow>
+                         </EuiFlexItem>
+ 
+                        
+                        }
+                   
                         {/* <EuiFlexItem>
                             <EuiFormRow label="Meters" >
                                 <EuiSelect options={optionsMeters} value={selectedOptionMeter} onChange={handleOptionSelectMeter} />
@@ -1303,12 +1442,15 @@ const Admin = () => {
                     </EuiFlexGroup>
                     <EuiSpacer />
                     <EuiFlexGroup>
-
+                       {isEditingMeters &&
                         <EuiFlexItem>
-                            <EuiFormRow label="Status" >
-                                <EuiSelect options={options} value={selectedOption1} onChange={handleOptionSelect1} />
-                            </EuiFormRow>
-                        </EuiFlexItem>
+                           <EuiFormRow label="Status" >
+                               <EuiSelect options={options} value={selectedOption1} onChange={handleOptionSelect1} />
+                           </EuiFormRow>
+                       </EuiFlexItem>
+
+                       }
+                     
                         {/* <EuiFlexItem>
                             <EuiFormRow label="Remarks" >
                                 <EuiFieldText name="remarks" />

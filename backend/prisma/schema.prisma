@@ -23,8 +23,8 @@ model Tenant {
   id          String  @id @default(cuid())
   firstName   String
   lastName    String
-  email       String
-  phoneNumber String
+  email       String  @unique
+  phoneNumber String  @unique
   status      Boolean @default(true)
 
   createdAt DateTime @default(now())
@@ -36,8 +36,8 @@ model Tenant {
 model Meter {
   id          String   @id @default(cuid())
   impkwh      Int      @default(3200)
-  hardwareId  String?
-  deviceName  String?
+  hardwareId  String?  @unique
+  deviceName  String?  @unique
   manufacture String?
   status      Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -48,6 +48,8 @@ model Meter {
 
   meterPulse       Pulse[]
   PowerConsumption PowerConsumption?
+
+
 }
 
 model Pulse {
@@ -68,6 +70,8 @@ model PowerConsumption {
 
   meter   Meter  @relation(fields: [meterId], references: [id])
   meterId String @unique
+
+  
 }
 
 model StandardCost {

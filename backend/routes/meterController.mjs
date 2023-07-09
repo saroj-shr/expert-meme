@@ -54,6 +54,21 @@ export async function createMeter(req, res, next) {
   const { impkwh, hardwareId, deviceName, manufacture, status } = req.body;
 
   try {
+      // Check if the deviceName already exists
+      const existingDevice = await prisma.meter.findUnique({
+        where: { deviceName: deviceName},
+      });
+
+      // Check if the deviceId already exists
+      const existingDeviceId = await prisma.meter.findUnique({
+        where: { hardwareId: hardwareId},
+      });
+  
+      if (existingDevice || existingDeviceId ) {
+        // Email already exists, return an error response
+        return res.status(400).json({ error: 'Device already exists' });
+      }
+  
     const meter = await prisma.meter.create({
       data: {
         impkwh,
@@ -76,8 +91,41 @@ export async function updateMeter(req, res, next) {
   const { impkwh, hardwareId, deviceName, manufacture, status } = req.body;
 
   try {
+    // Check if the hardware id already exists for other tenants
+  const existingMeterId = await prisma.meter.findFirst({
+    where: {
+      hardwareId: hardwareId,
+      NOT: {
+        id: {
+          equals: id,
+        },
+      },
+    },
+  });
+
+  // Check if the device name already exists for other tenants
+  const existingTenantPhone = await prisma.meter.findFirst({
+    where: {
+      deviceName: deviceName,
+      NOT: {
+        id: {
+          equals: id,
+        },
+      },
+    },
+  });
+
+  if (existingMeterId) {
+    // Email already exists for another tenant, return an error response
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+
+  if (existingTenantPhone) {
+    // Phone number already exists for another tenant, return an error response
+    return res.status(400).json({ error: 'Phone number already exists' });
+  }
     const meter = await prisma.meter.update({
-      where: { id },
+      where: { id :id},
       data: {
         impkwh,
         hardwareId,

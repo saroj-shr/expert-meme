@@ -10,10 +10,7 @@ const MyPower = ({ closeModal,powerConsumption }) => {
     const dataConsumption= meter.consumption;
     const number = parseFloat(dataConsumption);
     const formattedConsumption= number.toFixed(3);
-
-    console.log(meter.consumption,"99999999999999999999999999999")
- 
-
+    
     useEffect(() => {
         setMeter(powerConsumption);
      
@@ -25,13 +22,13 @@ const MyPower = ({ closeModal,powerConsumption }) => {
         };
     }, [])
 
-
+   
     return (
         <>
             <div className="modal-wrapper" onClick={closeModal}>
             </div>
             <div className="modal-container">
-                <EuiTitle><h3>Your Power Consumption</h3></EuiTitle>
+                <EuiTitle><h3>Cost Per Kwh Consumption</h3></EuiTitle>
                 <EuiSpacer />
                 <EuiTitle><h2>Rs.{formattedConsumption}</h2></EuiTitle>
           

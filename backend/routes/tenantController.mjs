@@ -50,9 +50,24 @@ export async function getTenantById(req, res, next) {
 
 // POST /tenants
 export async function createTenant(req, res, next) {
+   
   const { firstName, lastName, email, phoneNumber, status } = req.body;
-
   try {
+     // Check if the email already exists
+     const existingTenant = await prisma.tenant.findUnique({
+      where: { email: email },
+    });
+
+     // Check if the email already exists
+     const existingTenantPhone = await prisma.tenant.findUnique({
+      where: { phoneNumber: phoneNumber},
+    });
+
+    if (existingTenant || existingTenantPhone) {
+      // Email already exists, return an error response
+      return res.status(400).json({ error: 'Tenents already exists' });
+    }
+
     const tenant = await prisma.tenant.create({
       data: {
         firstName,
@@ -62,7 +77,7 @@ export async function createTenant(req, res, next) {
         status,
       },
     });
-
+ 
     res.status(201).json(tenant);
   } catch (error) {
     next(error);
@@ -75,8 +90,44 @@ export async function updateTenant(req, res, next) {
   const { firstName, lastName, email, status, phoneNumber } = req.body;
 
   try {
+  // Check if the email already exists for other tenants
+  const existingTenantEmail = await prisma.tenant.findFirst({
+    where: {
+      email: email,
+      NOT: {
+        id: {
+          equals: id,
+        },
+      },
+    },
+  });
+
+  // Check if the phone number already exists for other tenants
+  const existingTenantPhone = await prisma.tenant.findFirst({
+    where: {
+      phoneNumber: phoneNumber,
+      NOT: {
+        id: {
+          equals: id,
+        },
+      },
+    },
+  });
+
+  if (existingTenantEmail) {
+    // Email already exists for another tenant, return an error response
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+
+  if (existingTenantPhone) {
+    // Phone number already exists for another tenant, return an error response
+    return res.status(400).json({ error: 'Phone number already exists' });
+  }
+
+
+
     const tenant = await prisma.tenant.update({
-      where: { id },
+      where: { id: id },
       data: { firstName, lastName, email, status, phoneNumber },
     });
 
@@ -85,6 +136,8 @@ export async function updateTenant(req, res, next) {
     next(error);
   }
 }
+
+
 
 // DELETE /tenants/:id
 export async function deleteTenant(req, res, next) {
